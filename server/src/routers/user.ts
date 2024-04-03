@@ -55,7 +55,7 @@ const userRouter = t.router({
       },
     });
     if (!foundUser) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: "user not found",
       });
     }
@@ -77,5 +77,6 @@ const userRouter = t.router({
   }),
 });
 
-export { userRouter };
 export type AppRouter = typeof userRouter;
+
+export { userRouter };
