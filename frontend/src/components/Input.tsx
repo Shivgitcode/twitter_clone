@@ -3,6 +3,9 @@ import { solo } from "../assets";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import { CiImageOn } from "react-icons/ci";
 
 export default function Input() {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
@@ -16,28 +19,20 @@ export default function Input() {
   const { register, handleSubmit } = useForm<Post>({
     resolver: zodResolver(PostSchema),
   });
-
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const target = e.target as HTMLInputElement & {
-      files: FileList;
-    };
+  const onDrop = useCallback((acceptedFiles: FileList) => {
+    // console.log(acceptedFiles[0]);
     const file = new FileReader();
     file.onload = function () {
-      console.log(file.result);
       setPreview(file.result);
     };
-    file.readAsDataURL(target.files[0]);
-  };
+    file.readAsDataURL(acceptedFiles[0]);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+  });
 
   const submitHandler = (data: Post) => {
-    const file = new FileReader();
-    file.onload = function () {
-      console.log(file.result);
-    };
-
-    file.readAsDataURL(data.img[0]);
-
-    console.log(data.img[0]);
+    console.log(data);
   };
 
   return (
@@ -52,20 +47,29 @@ export default function Input() {
         <textarea
           id=""
           cols={30}
-          rows={4}
-          className=" resize-none bg-transparent w-full p-[8px]"
+          rows={2}
+          className=" resize-none mb-3 bg-transparent w-full h-[40px] p-[8px]"
           placeholder="What's happening"
           {...register("post")}
         ></textarea>
-        <input
-          type="file"
-          {...register("img")}
-          accept="image/png image/jpg"
-          onChange={handleChange}
-        />
-        <img src={preview} />
+        <div {...getRootProps()} className="w-full">
+          <input {...getInputProps()} {...register("img")} className="w-full" />
+          {isDragActive ? (
+            <div
+              className={`w-full h-[60px] bg-blue-500/40 items-center flex justify-center`}
+            >
+              Drop the files here ...
+            </div>
+          ) : (
+            <div className=" ">
+              <CiImageOn fill="#308CD8" fontSize={23}></CiImageOn>
+              <img src={preview as string} alt="" />
+            </div>
+          )}
+        </div>
+
         <div className="h-[1px] w-full bg-[#2F3336] mt-1"></div>
-        <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col py-[0.3rem]">
           <button className=" self-end bg-[#308cd8] py-[4px] px-[20px] my-[5px] rounded-full ">
             Tweet
           </button>

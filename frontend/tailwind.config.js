@@ -6,6 +6,9 @@ export default {
       fontFamily: {
         syne: ["Syne", "sans-serif"],
       },
+      colors:{
+        myBorder:"#2F3336"
+      }
     },
   },
   plugins: [],
