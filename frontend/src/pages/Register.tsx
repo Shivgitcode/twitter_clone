@@ -1,10 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { twitter } from "../assets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { trpc } from "../utils";
+import toast from "react-hot-toast";
 
 export default function Register() {
+  const registerQuery=trpc.register.useMutation()
+  const navigate=useNavigate()
   const UserSchema = z.object({
     username: z.string().includes("@"),
     email: z.string().email().endsWith("@gmail.com"),
@@ -14,7 +18,13 @@ export default function Register() {
   type User = z.infer<typeof UserSchema>;
 
   const submitHandler = (data: User) => {
-    console.log(data);
+    registerQuery.mutate(data)
+    console.log(registerQuery.data?.message)
+    navigate("/login")
+    toast.success(registerQuery.data?.message as string)
+    
+    
+    
   };
 
   const {

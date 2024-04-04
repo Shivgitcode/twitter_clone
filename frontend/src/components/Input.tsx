@@ -56,7 +56,7 @@ export default function Input() {
           <input {...getInputProps()} {...register("img")} className="w-full" />
           {isDragActive ? (
             <div
-              className={`w-full h-[60px] bg-blue-500/40 items-center flex justify-center`}
+              className={`w-full h-[60px] bg-blue-500/40 items-center flex justify-center text-[rgb(255,255,245)]`}
             >
               Drop the files here ...
             </div>

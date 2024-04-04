@@ -3,20 +3,48 @@ import { twitter } from "../assets";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { trpc } from "../utils";
+import { useAppContext } from "../context/AppContext";
+import Cookies from "js-cookie"
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const loginQuery=trpc.login.useMutation()
+  const {setIsLoggedIn}=useAppContext()
   const loginSchema = z.object({
     username: z.string(),
     password: z.string(),
   });
+  const usersQuery=trpc.getUsers.useQuery()
   type Login = z.infer<typeof loginSchema>;
+  const navigate=useNavigate()
 
   const { register, handleSubmit } = useForm<Login>({
     resolver: zodResolver(loginSchema),
   });
+    
+
 
   const submitHandler = (data: Login) => {
-    console.log(data);
+    if(loginQuery.error){
+      return <h1>Error...</h1>
+    }
+
+    if(loginQuery.isPending){
+      return <h1>Loading...</h1>
+    }
+    console.log(data)
+
+    loginQuery.mutate(data);
+    console.log(JSON.stringify(loginQuery.data))
+    setIsLoggedIn(Cookies.get("jwt") as string)
+    navigate("/")
+    toast.success("Logged In successfully")
+    
+
+    
+    
   };
   return (
     <div className="w-screen h-screen bg-black flex justify-center">
