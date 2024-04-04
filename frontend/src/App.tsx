@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import { trpc } from "./utils/index";
+import Home from "./pages/Home";
 
 export function App() {
   const [queryClient] = useState(() => new QueryClient());
@@ -13,6 +14,12 @@ export function App() {
       links: [
         httpBatchLink({
           url: "http://localhost:3000/trpc",
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              credentials: "include",
+            });
+          },
         }),
       ],
     });
@@ -23,6 +30,7 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <div className=" font-syne">
           <Routes>
+            <Route path="/" element={<Home></Home>}></Route>
             <Route path="/login" element={<Login></Login>}></Route>
             <Route path="/register" element={<Register></Register>}></Route>
           </Routes>

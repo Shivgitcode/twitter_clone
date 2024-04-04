@@ -3,19 +3,8 @@ import { twitter } from "../assets";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { trpc } from "../utils";
-import { useEffect } from "react";
 
 export default function Login() {
-  const userQuery = trpc.login.useMutation();
-  const newQuery = trpc.getUsers.useQuery();
-  console.log(newQuery.data?.message);
-
-  function handleLogin() {
-    userQuery.mutate({ username: "shivansh", password: "12345678" });
-    // console.log(userQuery.data);
-  }
-
   const loginSchema = z.object({
     username: z.string(),
     password: z.string(),
@@ -56,7 +45,7 @@ export default function Login() {
               className="w-full p-2 bg-gray-50 rounded-full font-bold text-gray-900 border-[4px] border-gray-700 hover:border-blue-500 transition-all duration-200"
               type="submit"
               id=""
-              onClick={handleLogin}
+              // onClick={handleLogin}
             />
             <p>
               Don't have an account?

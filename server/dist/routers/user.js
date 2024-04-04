@@ -54,9 +54,10 @@ const userRouter = t.router({
         if (isUser) {
             const token = jwt.sign({ id: foundUser.id }, secret);
             res.cookie("jwt", token);
-            return {
+            res.status(200).json({
+                message: "logged in successfully",
                 token: token,
-            };
+            });
         }
         else {
             return {
