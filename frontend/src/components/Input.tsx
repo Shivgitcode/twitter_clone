@@ -7,7 +7,16 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { CiImageOn } from "react-icons/ci";
 
-export default function Input() {
+type User={
+  id:string,
+  img:string,
+  username:string
+  email:string
+  password:string
+
+}
+
+export default function Input({value}:any) {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const PostSchema = z.object({
     post: z.string(),
@@ -38,7 +47,7 @@ export default function Input() {
   return (
     <div className="flex w-[93%] mx-auto justify-between">
       <div className="w-[48px] mr-[8px]">
-        <img src={solo} alt="" className="rounded-full" />
+        <img src={value.img} alt="" className="rounded-full" />
       </div>
       <form
         onSubmit={handleSubmit(submitHandler)}

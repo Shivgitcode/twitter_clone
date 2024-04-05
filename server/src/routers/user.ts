@@ -2,16 +2,18 @@ import { t } from "../trpc.js";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import jsonwebtoken, { JwtPayload } from "jsonwebtoken";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 export const secret = "thisistopsecret";
+export const jwt=jsonwebtoken
 
 const userProcedure = t.procedure.input(
   z.object({
     username: z.string(),
     email: z.string().email(),
     password: z.string().min(8),
+    imgFiles:z.any()
   })
 );
 
@@ -23,19 +25,28 @@ const loginProcedure = t.procedure.input(
 );
 
 const userRouter = t.router({
-  register: userProcedure.mutation(async ({ input }) => {
+  register: userProcedure.mutation(async ({ input,ctx }) => {
+    const {req,res}=ctx
     const { password } = input;
-    const hashPass = await bcrypt.hash(password, 12);
-    const createUser = await prisma.user.create({
-      data: {
-        ...input,
-        password: hashPass,
-      },
-    });
+    const file=req.files?.imgfiles
+    console.log(file)
+
     return {
-      message: "user created",
-      data: createUser,
-    };
+      message:"done"
+    }
+
+    
+    // const hashPass = await bcrypt.hash(password, 12);
+    // const createUser = await prisma.user.create({
+    //   data: {
+    //     ...input,
+    //     password: hashPass,
+    //   },
+    // });
+    // return {
+    //   message: "user created",
+    //   data: createUser,
+    // };
   }),
 
   getUsers: t.procedure.query(async () => {
@@ -55,9 +66,9 @@ const userRouter = t.router({
       },
     });
     if (!foundUser) {
-      return res.status(200).json({
-        message: "user not found",
-      });
+      return {
+        message:"user not found"
+      }
     }
 
     const { password: hashPass } = foundUser;
@@ -66,18 +77,41 @@ const userRouter = t.router({
     if (isUser) {
       const token = jwt.sign({ id: foundUser.id }, secret);
       res.cookie("jwt", token);
-      res.status(200).json({
-        message: "logged in successfully",
-        token: token,
-      });
+      return {
+        message:"isLogged In",
+        token
+      }
     } else {
       return {
         message: "Invalid username or password",
       };
     }
   }),
+  logout:t.procedure.mutation(async({ctx})=>{
+    const {req,res}=ctx
+    res.cookie("jwt","",{
+      maxAge:5
+    })
+    return {
+      message:"logged Out successfully"
+    }
+  }),
+  getUser:t.procedure.query(async({ctx})=>{
+    const {req,res}=ctx
+    const token=req.cookies.jwt
+    const verifyToken=jwt.verify(token,secret)
+    const {id}=verifyToken as JwtPayload
+    const user=await prisma.user.findFirst({
+      where:{
+        id:id
+      }
+    })
+    return {
+      user
+    }
+  })
 });
 
-export type AppRouter = typeof userRouter;
+// export type AppRouter = typeof userRouter;
 
 export { userRouter };

@@ -10,13 +10,17 @@ import Cookies from "js-cookie"
 import toast from "react-hot-toast";
 
 export default function Login() {
-  const loginQuery=trpc.login.useMutation()
-  const {setIsLoggedIn}=useAppContext()
+  const loginQuery=trpc.login.useMutation({onSuccess(data) {
+    console.log(data)
+      
+  },})
+  console.log(Cookies.get("jwt"))
+  const {setIsLoggedIn, isLoggedIn}=useAppContext()
   const loginSchema = z.object({
     username: z.string(),
     password: z.string(),
   });
-  const usersQuery=trpc.getUsers.useQuery()
+  // const usersQuery=trpc.getUsers.useQuery()
   type Login = z.infer<typeof loginSchema>;
   const navigate=useNavigate()
 
@@ -26,19 +30,17 @@ export default function Login() {
     
 
 
-  const submitHandler = (data: Login) => {
-    if(loginQuery.error){
-      return <h1>Error...</h1>
-    }
-
-    if(loginQuery.isPending){
-      return <h1>Loading...</h1>
-    }
-    console.log(data)
+  const submitHandler = async(data: Login) => {
+    
 
     loginQuery.mutate(data);
-    console.log(JSON.stringify(loginQuery.data))
+    // console.log(JSON.stringify(loginQuery.data))
+   
+
+    await new Promise((r) => setTimeout(r,1500))
+    console.log(Cookies.get("jwt") as string)
     setIsLoggedIn(Cookies.get("jwt") as string)
+    // console.log(isLoggedIn);
     navigate("/")
     toast.success("Logged In successfully")
     

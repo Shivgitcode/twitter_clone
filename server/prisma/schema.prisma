@@ -18,6 +18,7 @@ model User{
   id String @id @default(uuid())
   username String @unique 
   email String
+  img String @default("https://wallpapers-clan.com/wp-content/uploads/2023/02/anime-boy-black-pfp-1.jpg")
   password String
   posts Post[]
 }
