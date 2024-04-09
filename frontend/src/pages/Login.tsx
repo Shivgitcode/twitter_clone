@@ -4,49 +4,56 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { trpc } from "../utils";
 import { useAppContext } from "../context/AppContext";
 import Cookies from "js-cookie"
 import toast from "react-hot-toast";
 
 export default function Login() {
-  const loginQuery=trpc.login.useMutation({onSuccess(data) {
-    console.log(data)
-      
-  },})
+
   console.log(Cookies.get("jwt"))
-  const {setIsLoggedIn, isLoggedIn}=useAppContext()
+  const { setIsLoggedIn, isLoggedIn } = useAppContext()
   const loginSchema = z.object({
     username: z.string(),
     password: z.string(),
   });
   // const usersQuery=trpc.getUsers.useQuery()
   type Login = z.infer<typeof loginSchema>;
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   const { register, handleSubmit } = useForm<Login>({
     resolver: zodResolver(loginSchema),
   });
-    
 
 
-  const submitHandler = async(data: Login) => {
-    
 
-    loginQuery.mutate(data);
-    // console.log(JSON.stringify(loginQuery.data))
-   
+  const submitHandler = async (data: Login) => {
+    const response = await fetch("http://localhost:3000/api/v1/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      mode: "cors",
+      body: JSON.stringify(data)
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data)
+      setIsLoggedIn(Cookies.get("jwt") as string)
+      navigate("/")
 
-    await new Promise((r) => setTimeout(r,1500))
-    console.log(Cookies.get("jwt") as string)
-    setIsLoggedIn(Cookies.get("jwt") as string)
-    // console.log(isLoggedIn);
-    navigate("/")
-    toast.success("Logged In successfully")
-    
+      toast.success("Logged In successfully")
 
-    
-    
+
+    }
+    else {
+      const data = await response.json()
+      console.log(data)
+    }
+
+
+
+
   };
   return (
     <div className="w-screen h-screen bg-black flex justify-center">
@@ -75,7 +82,7 @@ export default function Login() {
               className="w-full p-2 bg-gray-50 rounded-full font-bold text-gray-900 border-[4px] border-gray-700 hover:border-blue-500 transition-all duration-200"
               type="submit"
               id=""
-              // onClick={handleLogin}
+            // onClick={handleLogin}
             />
             <p>
               Don't have an account?
@@ -93,3 +100,4 @@ export default function Login() {
     </div>
   );
 }
+
