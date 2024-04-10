@@ -1,9 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useActionData, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Posts from "../components/Posts";
 import { trpc } from "../utils";
 import { useEffect, useState } from "react";
 import { string } from "zod";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 // import { object } from "zod";
 
 export default function Home() {
@@ -17,11 +19,35 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()
   const [post, setPost] = useState<any[]>([])
+  const { newPost } = useAppContext()
 
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const response = await fetch("http://localhost:3000/api/v1/logout", {
+      method: "POST",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
 
-    navigate("/login")
+      },
+
+
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data)
+      navigate("/login")
+      toast.success(data.message)
+
+
+    }
+    else {
+      const data = await response.json()
+      console.log(data)
+
+    }
+
 
   }
   useEffect(() => {
@@ -61,7 +87,7 @@ export default function Home() {
       })
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
+        console.log(data.data)
         setPost(data.data)
 
 
@@ -75,7 +101,7 @@ export default function Home() {
     fetchPost()
 
 
-  }, [])
+  }, [newPost])
   console.log("post data", post)
 
   return (

@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
-import { solo } from "../assets";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { CiImageOn } from "react-icons/ci";
+import toast from "react-hot-toast";
+import { useAppContext } from "../context/AppContext";
 
 type User = {
   id: string,
@@ -18,6 +19,8 @@ type User = {
 
 export default function Input({ value }: { value: User }) {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const { newPost, setNewPost } = useAppContext()
+  const newForm = new FormData()
   const PostSchema = z.object({
     post: z.string(),
     img: z.any(),
@@ -25,12 +28,16 @@ export default function Input({ value }: { value: User }) {
 
   type Post = z.infer<typeof PostSchema>;
 
-  const { register, handleSubmit } = useForm<Post>({
+  const { register, handleSubmit, setValue } = useForm<Post>({
     resolver: zodResolver(PostSchema),
   });
   const onDrop = useCallback((acceptedFiles: FileList) => {
     // console.log(acceptedFiles[0]);
     const file = new FileReader();
+    console.log(acceptedFiles[0])
+    newForm.append("imgFile", acceptedFiles[0])
+    setValue("img", acceptedFiles[0])
+
     file.onload = function () {
       setPreview(file.result);
     };
@@ -40,10 +47,34 @@ export default function Input({ value }: { value: User }) {
     onDrop,
   });
 
-  const submitHandler = (data: Post) => {
-    console.log(data);
-  };
+  const submitHandler = async (data: Post, e: any) => {
+    console.log(data)
 
+    newForm.append("title", data.post)
+    newForm.append("imgFile", data.img)
+    const response = await fetch("http://localhost:3000/api/v1/post", {
+      method: "Post",
+      mode: "cors",
+      credentials: "include",
+      body: newForm
+
+
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data)
+      toast.success(data.message)
+      setNewPost(!newPost)
+    }
+    else {
+      const data = await response.json()
+      console.log(data)
+    }
+    setValue("post", "")
+    setPreview("")
+
+
+  };
   return (
     <div className="flex w-[93%] mx-auto justify-between">
       <div className="w-[48px] mr-[8px]">
@@ -62,7 +93,7 @@ export default function Input({ value }: { value: User }) {
           {...register("post")}
         ></textarea>
         <div {...getRootProps()} className="w-full">
-          <input {...getInputProps()} {...register("img")} className="w-full" />
+          <input {...getInputProps()}  {...register("img")} type="file" className="w-full" />
           {isDragActive ? (
             <div
               className={`w-full h-[60px] bg-blue-500/40 items-center flex justify-center text-[rgb(255,255,245)]`}

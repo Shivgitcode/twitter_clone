@@ -24,7 +24,7 @@ export default function Posts({ el }: { el: any }) {
 
           <div className="flex flex-col gap-[5px]">
             <p>{el.title}</p>
-            <img src={streak} alt="" />
+            <img src={el.img} alt="" className=" max-w-[150px]" />
           </div>
 
           <div className="flex items-center w-full justify-between mt-[10px]">
