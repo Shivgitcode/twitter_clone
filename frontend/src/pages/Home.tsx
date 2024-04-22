@@ -1,20 +1,27 @@
-import { useActionData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Posts from "../components/Posts";
-import { trpc } from "../utils";
 import { useEffect, useState } from "react";
-import { string } from "zod";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 // import { object } from "zod";
 
+type Post = {
+
+}
+
 export default function Home() {
   interface User {
-    id: string,
-    username: string,
-    img: string,
-    email: string,
-    password: string
+    message: string
+    data: {
+      id: string,
+      username: string,
+      img: string,
+      email: string,
+      password: string
+
+    }
+
   }
   const [user, setUser] = useState<User | null>(null)
   const navigate = useNavigate()

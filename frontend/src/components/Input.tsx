@@ -8,16 +8,22 @@ import { CiImageOn } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { useAppContext } from "../context/AppContext";
 
-type User = {
-  id: string,
-  img: string,
-  username: string
-  email: string
-  password: string
+type Value = {
+  message: string,
+  data: {
+    email: string,
+    id: string,
+    img: string,
+    password: string,
+    username: string,
+
+
+  }
+
 
 }
 
-export default function Input({ value }: { value: User }) {
+export default function Input({ value }: { value: Value | undefined }) {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const { newPost, setNewPost } = useAppContext()
   const newForm = new FormData()
@@ -75,10 +81,11 @@ export default function Input({ value }: { value: User }) {
 
 
   };
+  console.log(value)
   return (
     <div className="flex w-[93%] mx-auto justify-between">
       <div className="w-[48px] mr-[8px]">
-        <img src={value.data?.img} alt="" className="rounded-full" />
+        <img src={value?.data.img} alt="" className="rounded-full" />
       </div>
       <form
         onSubmit={handleSubmit(submitHandler)}
@@ -110,7 +117,7 @@ export default function Input({ value }: { value: User }) {
 
         <div className="h-[1px] w-full bg-[#2F3336] mt-1"></div>
         <div className="w-full flex flex-col py-[0.3rem]">
-          <button className=" self-end bg-[#308cd8] py-[4px] px-[20px] my-[5px] rounded-full ">
+          <button className=" self-end bg-[#308cd8] py-[4px] px-[20px] my-[5px] rounded-full text-white font-medium">
             Tweet
           </button>
         </div>
