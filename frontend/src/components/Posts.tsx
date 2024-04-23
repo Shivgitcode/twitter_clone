@@ -30,7 +30,7 @@ export default function Posts({ el }: { el: any }) {
 
           <div className="flex items-center w-full justify-between mt-[10px]">
             <div className="flex items-center gap-1">
-              <Link to={`/comment/${el.userId}`}>
+              <Link to={`/comment/${el.id}`}>
                 <GoComment fontSize={20} fill="#71767b" ></GoComment>
 
               </Link>

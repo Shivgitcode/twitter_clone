@@ -115,7 +115,7 @@ export default function Home() {
     <div className="w-screen bg-black">
       <div className="text-white w-[30%] border-[1px] border-[#2F3336] mx-auto">
         <p className="p-[16px] text-[18px] leading-[28px] font-medium">Home</p>
-        {user && <Input value={user}></Input>}
+        {user && <Input value={user} input="post"></Input>}
         <div>
           {post.map(el => (
             <Posts el={el}></Posts>

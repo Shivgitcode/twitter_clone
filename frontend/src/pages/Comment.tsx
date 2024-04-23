@@ -23,6 +23,8 @@ interface Data {
 export default function Comment() {
     const [user, setUser] = useState<undefined | Data>(undefined)
     const [currentUser, setCurrentUser] = useState<undefined | Data>(undefined)
+    // const [comment,setComment]=useState()
+
     const navigate = useNavigate()
     const params = useParams()
     const { id } = params
@@ -143,7 +145,7 @@ export default function Comment() {
                 </div>
 
                 <div className="my-5 px-5 border-b-[1px] border-myBorder">
-                    <Input value={currentUser}></Input>
+                    <Input value={currentUser} input="comment" id={id}></Input>
 
                 </div>
 

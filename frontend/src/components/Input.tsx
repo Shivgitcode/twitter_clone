@@ -23,10 +23,11 @@ type Value = {
 
 }
 
-export default function Input({ value }: { value: Value | undefined }) {
+export default function Input({ value, input, id }: { value: Value | undefined, input: string, id?: string }) {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const { newPost, setNewPost } = useAppContext()
   const newForm = new FormData()
+  const newForm2 = new FormData()
   const PostSchema = z.object({
     post: z.string(),
     img: z.any(),
@@ -81,6 +82,27 @@ export default function Input({ value }: { value: Value | undefined }) {
 
 
   };
+
+  const commentHandler = async (data: Post, e: any) => {
+    newForm2.append("comment", data.post)
+    newForm2.append("imgFile", data.img)
+    const response = await fetch(`http://localhost:3000/api/v1/comment/${id}`, {
+      method: "post",
+      mode: "cors",
+
+      credentials: "include",
+      body: newForm2
+
+    })
+    if (response.ok) {
+      const data = await response.json()
+      console.log(data)
+    }
+    else {
+      const data = await response.json()
+      console.log(data)
+    }
+  }
   console.log(value)
   return (
     <div className="flex w-[93%] mx-auto justify-between">
@@ -88,14 +110,14 @@ export default function Input({ value }: { value: Value | undefined }) {
         <img src={value?.data.img} alt="" className="rounded-full" />
       </div>
       <form
-        onSubmit={handleSubmit(submitHandler)}
+        onSubmit={handleSubmit(input === "post" ? submitHandler : commentHandler)}
         className="flex flex-col items-end flex-1"
       >
         <textarea
           id=""
           cols={30}
           rows={2}
-          className=" resize-none mb-3 bg-transparent w-full h-[40px] p-[8px]"
+          className=" resize-none mb-3 bg-transparent w-full h-[40px] p-[8px] text-white"
           placeholder="What's happening"
           {...register("post")}
         ></textarea>
