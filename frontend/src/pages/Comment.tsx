@@ -7,17 +7,12 @@ import { IoHeartOutline } from "react-icons/io5";
 import { IoShareSocialOutline } from "react-icons/io5";
 import Input from "../components/Input";
 import { useEffect, useState } from "react";
+import { Post } from "../utils";
+import SingleComment from "../components/SingleComment";
 
 interface Data {
     message: string,
-    data: {
-        id: string,
-        username: string,
-        email: string,
-        password: string,
-        img: string
-
-    }
+    data: Post
 }
 
 export default function Comment() {
@@ -62,7 +57,7 @@ export default function Comment() {
 
 
         const fetchUser = async (id: string) => {
-            const response = await fetch(`http://localhost:3000/api/v1/user/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/v1/post/${id}`, {
                 method: "GET",
                 mode: "cors",
                 credentials: "include"
@@ -93,7 +88,7 @@ export default function Comment() {
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center text-white ">
                             <div className="w-[48px] h-[48px] rounded-full ">
-                                <img src={user?.data.img} alt="" className="w-full object-cover rounded-full " />
+                                <img src={user?.data.user.img} alt="" className="w-full object-cover rounded-full " />
                             </div>
 
                             <div className="pl-2 flex flex-col items-start justify-start flex-1">
@@ -147,6 +142,14 @@ export default function Comment() {
                 <div className="my-5 px-5 border-b-[1px] border-myBorder">
                     <Input value={currentUser} input="comment" id={id}></Input>
 
+                </div>
+
+                <div>
+                    {
+                        user?.data.comments.map((el) => {
+                            return <SingleComment el={el} username={user.data.user.username} email={user.data.user.email} img={user.data.user.img} ></SingleComment>
+                        })
+                    }
                 </div>
 
 

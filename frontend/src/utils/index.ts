@@ -1,6 +1,26 @@
-// utils/trpc.ts
-import { createTRPCReact } from "@trpc/react-query";
-import type { AppRouter } from "../../../server/src/routers/post";
+export type Comments = {
+    id: string
+    comment: string
+    img: string
+    postId: string
+}
 
-export const trpc = createTRPCReact<AppRouter>();
-// => { useQuery: ..., useMutation: ...}
+type User = {
+    id: string
+    img: string
+    password: string
+    email: string
+    username: string
+
+}
+
+export interface Post {
+    id: string
+    date: string
+    img: string
+    like: boolean;
+    title: string;
+    userId: string;
+    user: User;
+    comments: Comments[]
+}

@@ -7,19 +7,11 @@ import { useDropzone } from "react-dropzone";
 import { CiImageOn } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { useAppContext } from "../context/AppContext";
+import { Post } from "../utils"
 
 type Value = {
   message: string,
-  data: {
-    email: string,
-    id: string,
-    img: string,
-    password: string,
-    username: string,
-
-
-  }
-
+  data: Post
 
 }
 
@@ -83,7 +75,7 @@ export default function Input({ value, input, id }: { value: Value | undefined, 
 
   };
 
-  const commentHandler = async (data: Post, e: any) => {
+  const commentHandler = async (data: Post) => {
     newForm2.append("comment", data.post)
     newForm2.append("imgFile", data.img)
     const response = await fetch(`http://localhost:3000/api/v1/comment/${id}`, {
@@ -102,6 +94,8 @@ export default function Input({ value, input, id }: { value: Value | undefined, 
       const data = await response.json()
       console.log(data)
     }
+    setValue("post", "")
+    setPreview("")
   }
   console.log(value)
   return (

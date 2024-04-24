@@ -1,0 +1,71 @@
+import { GoComment } from "react-icons/go";
+import { BsRepeat } from "react-icons/bs";
+import { IoHeartOutline } from "react-icons/io5";
+import { IoHeart } from "react-icons/io5";
+import { IoShareSocialOutline } from "react-icons/io5";
+import { solo, streak } from "../assets";
+import { Link } from "react-router-dom";
+import { Comments } from "../utils";
+
+export default function Posts({ el, username, email, img }: { el: Comments, username: string, email: string, img: string }) {
+    return (
+        <div className="w-full p-[20px] border-t-[1px] border-b-[1px] border-myBorder">
+            <div className="flex">
+
+                <div className="w-[48px] mr-[8px]">
+                    <img src={solo} alt="" className=" rounded-full" />
+                </div>
+
+                <div className="flex flex-col gap-[2px]">
+
+
+                    <div className="flex w-full items-end justify-start gap">
+                        <p className="text-[16px] leading-[24px] pr-[4px] font-bold text-white">{username}</p>
+                        <span className="text-[16px] leading-[24px] text-[#71767b]">{email.split("@")[0]} 48 m</span>
+                    </div>
+
+                    <div className="flex flex-col gap-[5px]">
+                        <p>{el.comment}</p>
+                        <img src={el.img} alt="" className=" max-w-[150px]" />
+                    </div>
+
+                    <div className="flex items-center w-full justify-between mt-[10px]">
+                        <div className="flex items-center gap-1">
+                            <Link to={`/comment/${el.id}`}>
+                                <GoComment fontSize={20} fill="#71767b" ></GoComment>
+
+                            </Link>
+
+                            <span className="text-[#71767b]">0</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <BsRepeat fontSize={20} fill="#71767b"></BsRepeat>
+                            <span className="text-[#71767b]">0</span>
+
+
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <IoHeartOutline fontSize={20} stroke="#71767b"></IoHeartOutline>
+                            <span className="text-[#71767b]">0</span>
+
+
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <IoShareSocialOutline fontSize={20} stroke="#71767b"></IoShareSocialOutline>
+                            <span className="text-[#71767b]">0</span>
+
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+    );
+}
